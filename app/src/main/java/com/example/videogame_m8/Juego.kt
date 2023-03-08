@@ -1,12 +1,14 @@
 package com.example.videogame_m8
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import kotlinx.coroutines.sync.Semaphore
 import java.util.*
 
 // Extensión de una View. Totalmente necesario para dibujar
@@ -64,9 +66,9 @@ class Juego : View {
         fondo.style = Paint.Style.FILL_AND_STROKE
         cesta.color = Color.YELLOW
         cesta.style = Paint.Style.FILL_AND_STROKE
-        moneda.color = Color.RED
+        moneda.color = Color.GREEN
         moneda.style = Paint.Style.FILL_AND_STROKE
-        dodge.color = Color.GREEN
+        dodge.color = Color.RED
         dodge.style = Paint.Style.FILL_AND_STROKE
         puntosDraw.textAlign = Paint.Align.RIGHT
         puntosDraw.textSize = 50f
@@ -102,6 +104,7 @@ class Juego : View {
         canvas.drawText("Puntos: $puntos", (ancho - 150).toFloat(), 150f, puntosDraw)
         //Pintamos vidas
         canvas.drawText("Vidas: $vidas", 150f, 150f, vidasDraw)
+
     }
 
     private fun resetMoneda() {
@@ -116,9 +119,16 @@ class Juego : View {
         if (RectF.intersects(rectCesta!!, rectMoneda!!)) {
             resetMoneda()
             puntos++
-        }else if (posMonedaY < 0 && vidas > 1) {
+        }else if (posMonedaY < 0 && vidas > 0) {
             resetMoneda()
             vidas--
+            if (vidas == 0) {
+                resetMoneda()
+                resetDodge()
+                MainActivity().timer.cancel()
+                MainActivity().timer.purge()
+                showGameOverDialog()
+            }
         }
     }
     private fun makeRect(posX: Int, posY: Int, radio: Int): RectF {
@@ -130,12 +140,43 @@ class Juego : View {
         )
     }
     private fun detectarColisionDodgeCesta() {
-        if (RectF.intersects(rectCesta!!, rectDodge!!) && vidas > 1) {
+        if (RectF.intersects(rectCesta!!, rectDodge!!) && vidas > 0) {
             resetDodge()
             vidas--
-        }else if (posDodgeY < 0 && vidas > 1) {
+            if (vidas == 0) {
+                resetMoneda()
+                resetDodge()
+                MainActivity().timer.cancel()
+                MainActivity().timer.purge()
+                showGameOverDialog()
+            }
+        }else if (posDodgeY < 0 && vidas > 0) {
             resetDodge()
         }
     }
 
+
+    private fun showGameOverDialog() {
+        val dialogBuilder = AlertDialog.Builder(context)
+        dialogBuilder.setTitle("Game Over")
+        dialogBuilder.setMessage("¿Quieres volver a jugar?")
+        dialogBuilder.setPositiveButton("Sí") { _, _ ->
+            reiniciarJuego()
+        }
+        dialogBuilder.setNegativeButton("No") { _, _ ->
+            //Si no quiere volver a jugar, se cierra la aplicación
+            System.exit(0)
+        }
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+    }
+    private fun reiniciarJuego() {
+        posX = ancho / 2
+        posY = 50
+        puntos = 0
+        vidas = 3
+        resetMoneda()
+        resetDodge()
+        invalidate()
+    }
 }
