@@ -23,13 +23,21 @@ class Juego : View {
     var posMonedaY = 0
     var posDodgeX = 0
     var posDodgeY = 0
-    var vidas = 3
-    var puntos = 0
+    var posMoneda2X = 0
+    var posMoneda2Y = 0
+    private var vidas = 3
+    private var puntos = 0
     private val gestos: GestureDetector? = null
     private var rectCesta: RectF? = null
     private var rectMoneda: RectF? = null
     private var rectDodge: RectF? = null
+    private var rectMoneda2: RectF? = null
     private val random = Random()
+
+    private val bitmapCesta = BitmapFactory.decodeResource(resources, R.drawable.cesta)
+    private val bitmapCaramelo = BitmapFactory.decodeResource(resources, R.drawable.caramelo)
+    private val bitmapFresa = BitmapFactory.decodeResource(resources, R.drawable.fresa)
+    private val bitmapPera = BitmapFactory.decodeResource(resources, R.drawable.pera)
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -59,6 +67,7 @@ class Juego : View {
         val cesta = Paint()
         val moneda = Paint()
         val dodge = Paint()
+        val moneda2 = Paint()
         val puntosDraw = Paint()
         val vidasDraw = Paint()
         //Definimos los colores de los objetos a pintar
@@ -70,6 +79,8 @@ class Juego : View {
         moneda.style = Paint.Style.FILL_AND_STROKE
         dodge.color = Color.RED
         dodge.style = Paint.Style.FILL_AND_STROKE
+        moneda2.color = Color.BLUE
+        moneda2.style = Paint.Style.FILL_AND_STROKE
         puntosDraw.textAlign = Paint.Align.RIGHT
         puntosDraw.textSize = 50f
         puntosDraw.color = Color.WHITE
@@ -80,26 +91,33 @@ class Juego : View {
         canvas.drawRect(Rect(0, 0, ancho, alto), fondo)
         // Pinto la pelota. La Y la implementa el timer y la X la pongo aleatoreamente en cuanto llega al final
         rectCesta = makeRect(posX, posY, radio)
-        canvas.drawOval(rectCesta!!, cesta)
+        canvas.drawBitmap(bitmapCesta, null, rectCesta!!, cesta)
         //Pintamos moneda
         if (posMonedaY > alto) {
             posMonedaY = 50
             posMonedaX = random.nextInt(ancho)
         }
         rectMoneda = makeRect(posMonedaX, posMonedaY, radio)
-        canvas.drawOval(rectMoneda!!, moneda)
+        canvas.drawBitmap(bitmapFresa, null, rectMoneda!!, moneda)
 
+        if (posMoneda2Y > alto){
+            posMoneda2Y = 50
+            posMoneda2X = random.nextInt(ancho)
+        }
+        rectMoneda2 = makeRect(posMoneda2X, posMoneda2Y, radio)
+        canvas.drawBitmap(bitmapPera, null, rectMoneda2!!, moneda2)
         //Pintamos dodge
         if (posDodgeY > alto) {
             posDodgeY = 50
             posDodgeX = random.nextInt(ancho)
         }
         rectDodge = makeRect(posDodgeX, posDodgeY, radio)
-        canvas.drawOval(rectDodge!!, dodge)
+        canvas.drawBitmap(bitmapCaramelo, null, rectDodge!!, dodge)
 
         // calculo de interseccion
         detectarColisionMonedaCesta()
         detectarColisionDodgeCesta()
+        detectarColisionMoneda2Cesta()
         //Pintamos puntos
         canvas.drawText("Puntos: $puntos", (ancho - 150).toFloat(), 150f, puntosDraw)
         //Pintamos vidas
@@ -114,6 +132,26 @@ class Juego : View {
     private fun resetDodge(){
         posDodgeY = alto - 50
         posDodgeX = random.nextInt(ancho)
+    }
+    private fun resetMoneda2(){
+        posMoneda2Y = alto - 50
+        posMoneda2X = random.nextInt(ancho)
+    }
+    private fun detectarColisionMoneda2Cesta() {
+        if (RectF.intersects(rectCesta!!, rectMoneda2!!)) {
+            resetMoneda2()
+            puntos+= 2
+        }else if (posMoneda2Y < 0 && vidas > 0) {
+            resetMoneda2()
+            vidas--
+            if (vidas == 0) {
+                resetMoneda2()
+                resetDodge()
+                MainActivity().timer.cancel()
+                MainActivity().timer.purge()
+                showGameOverDialog()
+            }
+        }
     }
     private fun detectarColisionMonedaCesta() {
         if (RectF.intersects(rectCesta!!, rectMoneda!!)) {
@@ -177,6 +215,7 @@ class Juego : View {
         vidas = 3
         resetMoneda()
         resetDodge()
+        resetMoneda2()
         invalidate()
     }
 }

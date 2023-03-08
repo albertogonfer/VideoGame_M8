@@ -27,8 +27,10 @@ class MainActivity : AppCompatActivity() {
             juego!!.radio = 50
             juego!!.posMonedaY = juego!!.alto - 50
             juego!!.posDodgeY = juego!!.alto - 50
+            juego!!.posMoneda2Y = juego!!.alto - 50
             juego!!.posMonedaX = random.nextInt(juego!!.ancho - 50)
             juego!!.posDodgeX = random.nextInt(juego!!.ancho - 50)
+            juego!!.posMoneda2X = random.nextInt(juego!!.ancho - 50)
         }
 
         //Ejecutamos cada 20 milisegundos
@@ -37,7 +39,8 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 handler.post { //Cada x segundos movemos la moneda 10dp
                     juego!!.posMonedaY -= 20 * (difficultyMultiplier).toInt()
-                    juego!!.posDodgeY -= 30 * (difficultyMultiplier).toInt()
+                    juego!!.posDodgeY -= 40 * (difficultyMultiplier).toInt()
+                    juego!!.posMoneda2Y -= 30 * (difficultyMultiplier).toInt()
                     //refreca la pantalla y llama al draw
                     juego!!.invalidate()
                 }
