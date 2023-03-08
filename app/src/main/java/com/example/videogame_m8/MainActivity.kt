@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
             juego!!.ancho = juego!!.getWidth()
             juego!!.alto = juego!!.getHeight()
             juego!!.posX = juego!!.ancho / 2
-            juego!!.posY = juego!!.alto - 50
+            juego!!.posY = 50
             juego!!.radio = 50
-            juego!!.posMonedaY = 50
+            juego!!.posMonedaY = juego!!.alto - 50
         }
 
         //Ejecutamos cada 20 milisegundos
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         timer.schedule(object : TimerTask() {
             override fun run() {
                 handler.post { //Cada x segundos movemos la moneda 10dp
-                    juego!!.posMonedaY += 10
+                    juego!!.posMonedaY -= 20
                     //refreca la pantalla y llama al draw
                     juego!!.invalidate()
                 }
