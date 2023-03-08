@@ -1,5 +1,6 @@
 package com.example.videogame_m8
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -11,11 +12,13 @@ class MainActivity : AppCompatActivity() {
     var juego: Juego? = null
     private val random = Random()
     private val handler = Handler()
+    val timer = Timer()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         juego = findViewById<View>(R.id.Pantalla) as Juego
         val obs: ViewTreeObserver = juego!!.getViewTreeObserver()
+        var difficultyMultiplier = intent.getDoubleExtra("difficultyMultiplier", 1.0)
         obs.addOnGlobalLayoutListener { // Sólo se puede averiguar el ancho y alto una vez ya se ha pintado el layout. Por eso se calcula en este listener
             juego!!.ancho = juego!!.getWidth()
             juego!!.alto = juego!!.getHeight()
@@ -29,12 +32,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Ejecutamos cada 20 milisegundos
-        val timer = Timer()
+
         timer.schedule(object : TimerTask() {
             override fun run() {
                 handler.post { //Cada x segundos movemos la moneda 10dp
-                    juego!!.posMonedaY -= 20
-                    juego!!.posDodgeY -= 30
+                    juego!!.posMonedaY -= 20 * (difficultyMultiplier).toInt()
+                    juego!!.posDodgeY -= 30 * (difficultyMultiplier).toInt()
                     //refreca la pantalla y llama al draw
                     juego!!.invalidate()
                 }
