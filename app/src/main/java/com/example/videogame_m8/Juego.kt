@@ -19,11 +19,14 @@ class Juego : View {
     var radio = 0
     var posMonedaX = 0
     var posMonedaY = 0
+    var posDodgeX = 0
+    var posDodgeY = 0
     var vidas = 3
     var puntos = 0
     private val gestos: GestureDetector? = null
     private var rectCesta: RectF? = null
     private var rectMoneda: RectF? = null
+    private var rectDodge: RectF? = null
     private val random = Random()
 
     constructor(context: Context?) : super(context)
@@ -53,6 +56,7 @@ class Juego : View {
         val fondo = Paint()
         val cesta = Paint()
         val moneda = Paint()
+        val dodge = Paint()
         val puntosDraw = Paint()
         val vidasDraw = Paint()
         //Definimos los colores de los objetos a pintar
@@ -62,6 +66,8 @@ class Juego : View {
         cesta.style = Paint.Style.FILL_AND_STROKE
         moneda.color = Color.RED
         moneda.style = Paint.Style.FILL_AND_STROKE
+        dodge.color = Color.GREEN
+        dodge.style = Paint.Style.FILL_AND_STROKE
         puntosDraw.textAlign = Paint.Align.RIGHT
         puntosDraw.textSize = 50f
         puntosDraw.color = Color.WHITE
@@ -71,27 +77,27 @@ class Juego : View {
         //Pinto rectángulo con un ancho y alto de 1000 o de menos si la pantalla es menor.
         canvas.drawRect(Rect(0, 0, ancho, alto), fondo)
         // Pinto la pelota. La Y la implementa el timer y la X la pongo aleatoreamente en cuanto llega al final
-        rectCesta = RectF(
-            (posX - radio).toFloat(),
-            (posY - radio).toFloat(),
-            (posX + radio).toFloat(),
-            (posY + radio).toFloat()
-        )
+        rectCesta = makeRect(posX, posY, radio)
         canvas.drawOval(rectCesta!!, cesta)
         //Pintamos moneda
         if (posMonedaY > alto) {
             posMonedaY = 50
             posMonedaX = random.nextInt(ancho)
         }
-        rectMoneda = RectF(
-            (posMonedaX - radio).toFloat(),
-            (posMonedaY - radio).toFloat(),
-            (posMonedaX + radio).toFloat(),
-            (posMonedaY + radio).toFloat()
-        )
+        rectMoneda = makeRect(posMonedaX, posMonedaY, radio)
         canvas.drawOval(rectMoneda!!, moneda)
+
+        //Pintamos dodge
+        if (posDodgeY > alto) {
+            posDodgeY = 50
+            posDodgeX = random.nextInt(ancho)
+        }
+        rectDodge = makeRect(posDodgeX, posDodgeY, radio)
+        canvas.drawOval(rectDodge!!, dodge)
+
         // calculo de interseccion
         detectarColisionMonedaCesta()
+        detectarColisionDodgeCesta()
         //Pintamos puntos
         canvas.drawText("Puntos: $puntos", (ancho - 150).toFloat(), 150f, puntosDraw)
         //Pintamos vidas
@@ -102,6 +108,10 @@ class Juego : View {
         posMonedaY = alto - 50
         posMonedaX = random.nextInt(ancho)
     }
+    private fun resetDodge(){
+        posDodgeY = alto - 50
+        posDodgeX = random.nextInt(ancho)
+    }
     private fun detectarColisionMonedaCesta() {
         if (RectF.intersects(rectCesta!!, rectMoneda!!)) {
             resetMoneda()
@@ -109,6 +119,22 @@ class Juego : View {
         }else if (posMonedaY < 0 && vidas > 1) {
             resetMoneda()
             vidas--
+        }
+    }
+    private fun makeRect(posX: Int, posY: Int, radio: Int): RectF {
+        return RectF(
+            (posX - radio).toFloat(),
+            (posY - radio).toFloat(),
+            (posX + radio).toFloat(),
+            (posY + radio).toFloat()
+        )
+    }
+    private fun detectarColisionDodgeCesta() {
+        if (RectF.intersects(rectCesta!!, rectDodge!!) && vidas > 1) {
+            resetDodge()
+            vidas--
+        }else if (posDodgeY < 0 && vidas > 1) {
+            resetDodge()
         }
     }
 

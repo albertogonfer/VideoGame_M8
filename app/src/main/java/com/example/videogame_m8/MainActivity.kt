@@ -9,6 +9,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     var juego: Juego? = null
+    private val random = Random()
     private val handler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +23,9 @@ class MainActivity : AppCompatActivity() {
             juego!!.posY = 50
             juego!!.radio = 50
             juego!!.posMonedaY = juego!!.alto - 50
+            juego!!.posDodgeY = juego!!.alto - 50
+            juego!!.posMonedaX = random.nextInt(juego!!.ancho - 50)
+            juego!!.posDodgeX = random.nextInt(juego!!.ancho - 50)
         }
 
         //Ejecutamos cada 20 milisegundos
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 handler.post { //Cada x segundos movemos la moneda 10dp
                     juego!!.posMonedaY -= 20
+                    juego!!.posDodgeY -= 30
                     //refreca la pantalla y llama al draw
                     juego!!.invalidate()
                 }
