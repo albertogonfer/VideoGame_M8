@@ -92,11 +92,14 @@ class Juego : View {
         moneda2.color = Color.BLUE
         moneda2.style = Paint.Style.FILL_AND_STROKE
         puntosDraw.textAlign = Paint.Align.RIGHT
-        puntosDraw.textSize = 50f
-        puntosDraw.color = Color.WHITE
+        puntosDraw.textSize = 100f
+        puntosDraw.color = Color.BLACK
+        puntosDraw.typeface = Typeface.DEFAULT_BOLD
         vidasDraw.textAlign = Paint.Align.LEFT
-        vidasDraw.textSize = 50f
-        vidasDraw.color = Color.WHITE
+        vidasDraw.textSize = 100f
+        vidasDraw.textSize = 100f
+        vidasDraw.color = Color.BLACK
+        vidasDraw.typeface = Typeface.DEFAULT_BOLD
         //Pinto rectángulo con un ancho y alto de 1000 o de menos si la pantalla es menor.
         canvas.drawBitmap(bitmapFondo, null, Rect(0, 0, ancho, alto), null)
         // Pinto la pelota. La Y la implementa el timer y la X la pongo aleatoreamente en cuanto llega al final
