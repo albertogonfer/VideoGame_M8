@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         timer.schedule(object : TimerTask() {
             override fun run() {
                 handler.post { //Cada x segundos movemos la moneda 10dp
-                    juego!!.posMonedaY -= 20 * (difficultyMultiplier).toInt()
-                    juego!!.posDodgeY -= 40 * (difficultyMultiplier).toInt()
-                    juego!!.posMoneda2Y -= 30 * (difficultyMultiplier).toInt()
+                    juego!!.posMonedaY -= 10 * (difficultyMultiplier).toInt()
+                    juego!!.posDodgeY -= 30 * (difficultyMultiplier).toInt()
+                    juego!!.posMoneda2Y -= 20 * (difficultyMultiplier).toInt()
                     //refreca la pantalla y llama al draw
                     juego!!.invalidate()
                 }

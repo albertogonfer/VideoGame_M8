@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.*
+import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -38,9 +39,18 @@ class Juego : View {
     private val bitmapCaramelo = BitmapFactory.decodeResource(resources, R.drawable.caramelo)
     private val bitmapFresa = BitmapFactory.decodeResource(resources, R.drawable.fresa)
     private val bitmapPera = BitmapFactory.decodeResource(resources, R.drawable.pera)
+    private val bitmapFondo = BitmapFactory.decodeResource(resources, R.drawable.fondo)
 
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    private val mediaPlayer = MediaPlayer.create(context, R.raw.music)
+
+    constructor(context: Context?) : super(context) {
+        mediaPlayer.isLooping = true
+        mediaPlayer.start()
+    }
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs){
+        mediaPlayer.isLooping = true
+        mediaPlayer.start()
+    }
 
     //Sección que capta los eventos del usuario
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -88,7 +98,7 @@ class Juego : View {
         vidasDraw.textSize = 50f
         vidasDraw.color = Color.WHITE
         //Pinto rectángulo con un ancho y alto de 1000 o de menos si la pantalla es menor.
-        canvas.drawRect(Rect(0, 0, ancho, alto), fondo)
+        canvas.drawBitmap(bitmapFondo, null, Rect(0, 0, ancho, alto), null)
         // Pinto la pelota. La Y la implementa el timer y la X la pongo aleatoreamente en cuanto llega al final
         rectCesta = makeRect(posX, posY, radio)
         canvas.drawBitmap(bitmapCesta, null, rectCesta!!, cesta)
@@ -125,6 +135,11 @@ class Juego : View {
 
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        mediaPlayer.stop()
+        mediaPlayer.release()
+    }
     private fun resetMoneda() {
         posMonedaY = alto - 50
         posMonedaX = random.nextInt(ancho)
